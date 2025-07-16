@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hacked!? 😱</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      background: black;
+      color: #0f0;
+      font-family: monospace;
+      overflow: hidden;
+    }
+    canvas { position: fixed; top: 0; left: 0; z-index: 0; }
+    .content {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      height: 100vh; text-align: center;
+      backdrop-filter: blur(2px);
+    }
+    h1 {
+      font-size: 3rem;
+      color: red;
+      text-shadow: 0 0 15px red;
+      margin-bottom: 1rem;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; }
+    }
+    #logArea {
+      background: rgba(0,0,0,0.7);
+      border: 2px solid #0f0;
+      width: 80%;
+      max-width: 600px;
+      height: 180px;
+      padding: 10px;
+      overflow-y: auto;
+      box-shadow: inset 0 0 10px #0f0;
+    }
+    #reveal {
+      display: none;
+      background: #fff;
+      color: #000;
+      padding: 20px;
+      margin-top: 2rem;
+      border-radius: 10px;
+      max-width: 600px;
+      animation: fadeIn 1s ease forwards;
+    }
+    #reveal button {
+      margin-top: 1rem;
+      padding: 10px 20px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+  <div class="content">
+    <h1 id="typewriter"></h1>
+    <div id="logArea"></div>
+    
+  </div>
+
+  <script>
+    // Matrix
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array.from({ length: columns }).fill(1);
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#0F0";
+      ctx.font = fontSize + "px monospace";
+      drops.forEach((y, i) => {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, y * fontSize);
+        drops[i] = (y * fontSize > canvas.height && Math.random() > 0.975) ? 0 : y + 1;
+      });
+    }
+    setInterval(draw, 33);
+
+    // Typewriter
+    const message = "DEVICE HACKED";
+    let j = 0;
+    const typewriter = document.getElementById("typewriter");
+    function type() {
+      if (j < message.length) {
+        typewriter.textContent += message[j++];
+        setTimeout(type, 150);
+      }
+    }
+
+    // Fake Logs
+    const logArea = document.getElementById("logArea");
+    const logs = [
+      "Accessing secure files...",
+      "Injecting trojan...",
+      "Capturing webcam...",
+      "Downloading WhatsApp chats...",
+      "Decrypting saved passwords...",
+      "Connected to your brain...",
+      "Opening pizza delivery tab...",
+      "Changing wallpaper to your face...",
+      
+    ];
+    let k = 0;
+    function showLogs() {
+      if (k < logs.length) {
+        const line = document.createElement("div");
+        line.textContent = logs[k++];
+        logArea.appendChild(line);
+        logArea.scrollTop = logArea.scrollHeight;
+        setTimeout(showLogs, 800);
+      }
+    }
+
+    // Glitch Sound
+    const glitch = new Audio();
+    glitch.src = ["glitch.mp3", "glitch2.mp3", "glitch3.mp3"][Math.floor(Math.random()*3)];
+    glitch.volume = 0.4;
+
+    // Trigger all on click
+    document.addEventListener("click", () => {
+      glitch.play().catch(()=>{});
+      type();
+      showLogs();
+      setTimeout(() => {
+        document.getElementById("reveal").style.display = "block";
+        document.getElementById("reveal").scrollIntoView({behavior: "smooth"});
+      }, 9000);
+    }, { once: true });
+
+    // Share button
+    function share() {
+      navigator.clipboard.writeText(window.location.href)
+        .then(() => alert("📋 Link copied! Paste it to prank your buddy!"))
+        .catch(() => alert("Could not copy! Just send them this file."));
+    }
+  </script>
+</body>
+</html>
